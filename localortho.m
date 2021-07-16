@@ -1,5 +1,5 @@
 function [ signal2,noise2,low ] = localortho(signal,noise,rect,niter,eps,verb)
-%  YC_LOCAORTHO: Noise attenuation using local signal-and-noise
+%  LOCAORTHO: Noise attenuation using local signal-and-noise
 %  orthogonalization and output the local orthogonalization weight (LOW)
 %
 %  IN   signal:    initial signal
