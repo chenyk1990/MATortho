@@ -3,6 +3,9 @@ function [ simi ] = localsimi(d1,d2,rect,niter,eps,verb)
 %
 %  IN   d1:   	input data 1
 %       d2:     input data 2
+%       rect:   3-D vector denoting smooth radius
+%       niter:  number of CG iterations
+%       eps:    regularization parameter, default 0.0
 %       verb:   verbosity flag (default: 0)
 %
 %  OUT  simi:  	calculated local similarity, which is of the same size as d1 and d2
