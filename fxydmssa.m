@@ -42,6 +42,7 @@ if nargin==1
     fhigh=124;
     dt=0.004;
     N=1;
+    K=3;
     verb=0;
 end;
 
