@@ -1,5 +1,5 @@
-function [ rat ] = str_divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb)
-% str_divne: N-dimensional smooth division rat=num/den          
+function [ rat ] = lo_divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb)
+% lo_divne: N-dimensional smooth division rat=num/den          
 % This is a subroutine from the seistr package (https://github.com/chenyk1990/seistr)
 % 
 % BY Yangkang Chen, Hang Wang, and co-authors, 2019

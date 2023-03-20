@@ -83,7 +83,7 @@ ndat=[n1,n2,n3];
 eps_dv=eps;
 eps_cg=0.1; 
 tol_cg=0.000001;
-[ ratio ] = str_divne(noise, signal, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
+[ ratio ] = lo_divne(noise, signal, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
 
 signal2=signal+ratio.*signal;
 noise2=noise-ratio.*signal;

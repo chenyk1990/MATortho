@@ -28,11 +28,15 @@
 %               Zhang, et al., 2021, Geophysics
 clc;clear;close all;
 
+addpath(genpath('../matortho'));
+
 %% generate synthetic data
-a1=zeros(300,80);
+%This synthetic data was used in Huang et al., 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
+a1=zeros(300,20);
 [n,m]=size(a1);
 a3=a1;
 a4=a1;
+
 k=0;
 a=0.1;
 b=1;
@@ -45,25 +49,39 @@ for t=-0.055:0.002:0.055
 end
 for i=1:m
   t1(i)=round(140);
-  t3(i)=round(-2*i+220);
-  t4(i)=round(2*i+10);
+  t3(i)=round(-6*i+180);
+  t4(i)=round(6*i+10);
   a1(t1(i):t1(i)+k-1,i)=b1; 
   a3(t3(i):t3(i)+k-1,i)=b1; 
   a4(t4(i):t4(i)+k-1,i)=b1;
 end
-d0=a1(1:300,:)+a3(1:300,:)+a4(1:300,:);
+
+temp=a1(1:300,:)+a3(1:300,:)+a4(1:300,:);
+for j=1:20
+    a4=zeros(300,20);
+    for i=1:m
+  t4(i)=round(6*i+10+3*j); 
+  a4(t4(i):t4(i)+k-1,i)=b1;
+  
+  t1(i)=round(140-2*j);
+  a1(t1(i):t1(i)+k-1,i)=b1;
+    end
+    shot(:,:,j)=a1(1:300,:)+a3(1:300,:)+a4(1:300,:);
+end
+d0=shot;
 
 %% add noise
+[n1,n2,n3]=size(d0);
 randn('state',201415);
-n=0.1*randn(n,m);
+n=0.1*randn(n1,n2,n3);
 dn=d0+n;%adding noise
 
 %% Noise attenuation
-d1=fxydmssa(dn,0,120,0.004,3,1,0);	%DMSSA (when damping factor =1, there are heavy damages)
+d1=lo_drr3d(dn,0,120,0.004,3,1,0);	%DRR method (when damping factor =1, there are heavy damages)
 noi1=dn-d1;
 
 %% prepare paramters for ortho
-rect=[20,20,1];
+rect=[10,10,10];
 eps=0;
 niter=20;
 verb=1;
@@ -72,21 +90,24 @@ verb=1;
 [d2,noi2,low]=localortho(d1,noi1,rect,niter,eps,verb);
 
 %% calculate local similarity
-simi1=localsimi(d1,noi1,[5,5,1],niter,eps,verb);
-simi2=localsimi(d2,noi2,[5,5,1],niter,eps,verb);
+simi1=localsimi(d1,noi1,[5,5,5],niter,eps,verb);
+simi2=localsimi(d2,noi2,[5,5,5],niter,eps,verb);
 
 %% plot results
 figure('units','normalized','Position',[0.2 0.4 0.5, 0.8],'color','w');
-subplot(2,1,1);imagesc([dn,d1,noi1]);caxis([-0.6,0.6]);colormap(jet);title('Initial denoising');
-subplot(2,1,2);imagesc([dn,d2,noi2]);caxis([-0.6,0.6]);colormap(jet);title('Local orthogonalization');
+subplot(3,2,[1,3]);imagesc([reshape(dn,n1,n2*n3);reshape(d1,n1,n2*n3);reshape(noi1,n1,n2*n3)]);caxis([-0.6,0.6]);colormap(jet);title('Initial denoising (Noisy|Denoised|Noise)');
+ylabel('Time sample','Fontsize',10,'fontweight','bold');xlabel('Trace','Fontsize',10,'fontweight','bold');set(gca,'Linewidth',2,'Fontsize',10,'fontweight','bold');
+subplot(3,2,[2,4]);imagesc([reshape(dn,n1,n2*n3);reshape(d2,n1,n2*n3);reshape(noi2,n1,n2*n3)]);caxis([-0.6,0.6]);colormap(jet);title('Local orthogonalization (Noisy|Denoised|Noise)');
+ylabel('Time sample','Fontsize',10,'fontweight','bold');xlabel('Trace','Fontsize',10,'fontweight','bold');set(gca,'Linewidth',2,'Fontsize',10,'fontweight','bold');
+subplot(3,2,5);imagesc(reshape(simi1,n1,n2*n3));caxis([0,1]);colormap(jet);title('Local similarity: Initial denoising');
+ylabel('Time sample','Fontsize',10,'fontweight','bold');xlabel('Trace','Fontsize',10,'fontweight','bold');set(gca,'Linewidth',2,'Fontsize',10,'fontweight','bold');
+subplot(3,2,6);imagesc(reshape(simi2,n1,n2*n3));caxis([0,1]);colormap(jet);title('Local similarity: Local orthogonalization');
+ylabel('Time sample','Fontsize',10,'fontweight','bold');xlabel('Trace','Fontsize',10,'fontweight','bold');set(gca,'Linewidth',2,'Fontsize',10,'fontweight','bold');
+fprintf('SNR of initial denoising is %g\n',lo_snr(d0,d1,2));
+fprintf('SNR of local orthogonalization is %g\n',lo_snr(d0,d2,2));
 
-figure;
-subplot(1,2,1);imagesc(simi1);caxis([0,1]);colormap(jet);title('Local similarity: Initial denoising');
-subplot(1,2,2);imagesc(simi2);caxis([0,1]);colormap(jet);title('Local similarity: Local orthogonalization');
-
-fprintf('SNR of initial denoising is %g\n',str_snr(d0,d1));
-fprintf('SNR of local orthogonalization is %g\n',str_snr(d0,d2));
-
+print(gcf,'-depsc','-r300','test_localortho3d.eps');
+print(gcf,'-dpng','-r300','test_localortho3d.png');
 
 
 

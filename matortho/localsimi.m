@@ -70,8 +70,8 @@ ndat=[n1,n2,n3];
 eps_dv=eps;
 eps_cg=0.1; 
 tol_cg=0.000001;
-[ ratio ] = str_divne(d2, d1, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
-[ ratio1 ] = str_divne(d1, d2, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
+[ ratio ] = lo_divne(d2, d1, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
+[ ratio1 ] = lo_divne(d1, d2, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
 
 simi=sqrt(abs(ratio.*ratio1));
 
