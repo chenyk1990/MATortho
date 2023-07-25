@@ -5,6 +5,8 @@
 
 **MATortho** is a Matlab package for the local orthogonalization method and the local similarity measurement (for detecting signal leakage) introduced in Chen and Fomel (2015).
 
+**NOTE**: If you use this package to calculate local orthogonalization weight and local similarity, please show courtesy to cite the reference below. Using local similarity to calculate the signal leakage was first ever used in the work by Chen and Fomel (2015), please show courtesy if you use it for the same purpose.
+
 Since March, 19, 2023, this official site of Matlab-version local orthogonalization package has been moved to https://github.com/aaspip/MATortho. The current site of the package is no longer maintained.
 
 ## Reference
